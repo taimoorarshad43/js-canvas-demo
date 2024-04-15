@@ -11,13 +11,8 @@ let character = {
 
 let squares = [];
 
-let bullet = {
-    x: 0,
-    y: 0,
-    size: 2,
-    color: "green",
-    speed: 5
-}
+let bullets = [];
+
 
 // Generate random squares
 function generateSquares(numSquares) {
@@ -26,7 +21,7 @@ function generateSquares(numSquares) {
             x: Math.random() * (canvas.width - character.size), //minus character size b/c same size as enemy and want to spawn away from boundary
             y: Math.random() * (canvas.height - character.size),
             size: 20,
-            color: "red",
+            color: "red", //random reddish color?
             speed: Math.random() * 3 + 1, // Random speed between 1 and 4
             xDirection: Math.random() > 0.5 ? 1 : -1,
             yDirection: Math.random() > 0.5 ? 1 : -1
@@ -34,8 +29,22 @@ function generateSquares(numSquares) {
     }
 }
 
+function generateBullet(xdir, ydir){
+    console.log("Character position is?");
+    console.log(character.x);
+    console.log(character.y);
+    bullets.push({
+        x: character.x,
+        y: character.y,
+        size: 15,
+        color: "green",
+        speed: 7,
+        xDirection: xdir,
+        yDirection: ydir
+    })
+}
 
-function drawCharacter() { //draws both character and squares
+function drawCharacters() { //main render function that draws all entities
     //Character Block
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = character.color;
@@ -46,10 +55,16 @@ function drawCharacter() { //draws both character and squares
         ctx.fillStyle = square.color;
         ctx.fillRect(square.x, square.y, square.size, square.size);
     }
+
+    //Bullet Block
+    for (const bullet of bullets){
+        ctx.fillStyle = bullet.color;
+        ctx.fillRect(bullet.x, bullet.y, bullet.size, bullet.size);
+    }
 }
 
 
-//Changing the coordinates based on input and then redrawing the square while also checking for collision
+//Changes character x and y and then calls the main render function as well as the check collision function.
 function moveCharacter(event) {
     switch(event.key) {
         case "w":
@@ -71,9 +86,10 @@ function moveCharacter(event) {
     character.y = Math.max(0, Math.min(canvas.height - character.size, character.y));
 
     checkCollisions();
-    drawCharacter();
+    drawCharacters();
 }
 
+//Modifies the square object movements but doesn't actually render them.
 function moveSquares() {
     for (const square of squares) {
         square.x += square.speed * square.xDirection;
@@ -90,7 +106,9 @@ function moveSquares() {
     }
 }
 
+//Checks for geometry overlap and then removes from squares/bullets array.
 function checkCollisions() {
+    //square block
     for (let i = squares.length - 1; i >= 0; i--) {
         const square = squares[i];
         if (
@@ -109,24 +127,36 @@ function checkCollisions() {
 //TODO: Implement shooting logic
 function shootBullet(event){
         switch(event.key){
-            case 37: //left
-            case 38: //up
-            case 39: //right
-            case 40: //down
+            case "j": //left
+                generateBullet(-1, 0);
+                break;
+            case "i": //up
+                generateBullet(0, -1);
+                break;
+            case "l": //right
+                generateBullet(1, 0);
+                break;
+            case "k": //down
+                generateBullet(0, 1);
+                break;
         }
 }
 
-function drawBullet(){
-    ctx.fillStyle = bullet.color;
-    ctx.fillRect(square.x, square.y, bullet.size, bullet.size);
+function moveBullets(){
+    for(const bullet of bullets){
+        bullet.x += bullet.speed * bullet.xDirection;
+        bullet.y += bullet.speed * bullet.yDirection;
+    }
 }
 
+//Where we call the rendering methods
 generateSquares(5); // Generate 5 random squares
 setInterval(() => {
     moveSquares();
-    checkCollisions(); //should this be here twice? Already in drawCharacter
-    drawCharacter();
-}, 30);
+    checkCollisions(); //should this be here twice? Already in drawCharacters
+    drawCharacters();
+    moveBullets();
+}, 30); //This parameter is like FPS?
 
 // Handle keyboard input
 document.addEventListener("keydown", moveCharacter);
@@ -152,6 +182,8 @@ checkCollisions()
 
 document.addEventListener("keydown", moveCharacter);
 
+Generally the logic for drawing the ctx and calculating the position is decoupled.
+
 
 ~~~~~~~~~~~~~~~~~~ TODO ~~~~~~~~~~~~~~~~~~~~~~~
 Add projectiles out of character
@@ -161,4 +193,5 @@ shootBullet()
     Read player input
     drawBullet()?
 
+Test whether we can take out checkCollsions from main loop
 */
