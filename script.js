@@ -1,6 +1,9 @@
 const canvas = document.getElementById("characterCanvas");
 const ctx = canvas.getContext("2d");
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 let character = {
     x: 50,
     y: 50,
@@ -22,8 +25,9 @@ function generateSquares(numSquares) {
         squares.push({
             x: Math.random() * (canvas.width - character.width), //minus character size b/c same size as enemy and want to spawn away from boundary
             y: Math.random() * (canvas.height - character.height),
-            size: 20,
-            color: "red", //random reddish color?
+            height: 32,
+            width: 32,
+            sprite: document.getElementById("enemySprite"),
             speed: Math.random() * 3 + 1, // Random speed between 1 and 4
             xDirection: Math.random() > 0.5 ? 1 : -1,
             yDirection: Math.random() > 0.5 ? 1 : -1
@@ -32,14 +36,15 @@ function generateSquares(numSquares) {
 }
 
 function generateBullet(xdir, ydir){
-    console.log("Character position is?");
-    console.log(character.x);
-    console.log(character.y);
+    // console.log("Character position is?");
+    // console.log(character.x);
+    // console.log(character.y);
     bullets.push({
         x: character.x,
         y: character.y,
-        size: 15,
-        color: "blue",
+        height: 32,
+        width: 32,
+        sprite: document.getElementById("bubbleSprite"),
         speed: 7,
         xDirection: xdir,
         yDirection: ydir
@@ -52,19 +57,21 @@ function drawCharacters() { //main render function that draws all entities
     // ctx.fillStyle = character.color;
     // ctx.fillRect(character.x, character.y, character.size, character.size); //character size is both height and width b/c square
     ctx.drawImage(character.sprite, character.x, character.y, character.width, character.height);
-    console.log(character.x);
-    console.log(character.y);
 
     //Enemy Block
     for (const square of squares) {
-        ctx.fillStyle = square.color;
-        ctx.fillRect(square.x, square.y, square.size, square.size);
+        console.log(square);
+        // ctx.fillStyle = square.color;
+        // ctx.fillRect(square.x, square.y, square.size, square.size);
+        ctx.drawImage(square.sprite, square.x, square.y, square.width, square.height);
     }
 
     //Bullet Block
     for (const bullet of bullets){
-        ctx.fillStyle = bullet.color;
-        ctx.fillRect(bullet.x, bullet.y, bullet.size, bullet.size);
+        console.log(bullet);
+        // ctx.fillStyle = bullet.color;
+        // ctx.fillRect(bullet.x, bullet.y, bullet.size, bullet.size);
+        ctx.drawImage(bullet.sprite, bullet.x, bullet.y, bullet.width, bullet.height);
     }
 }
 
@@ -101,11 +108,11 @@ function moveSquares() {
         square.y += square.speed * square.yDirection;
 
         // Reverse direction if hitting canvas boundaries
-        if (square.x <= 0 || square.x >= canvas.width - square.size) {
+        if (square.x <= 0 || square.x >= canvas.width - square.width) {
             square.xDirection *= -1;
         }
 
-        if (square.y <= 0 || square.y >= canvas.height - square.size) {
+        if (square.y <= 0 || square.y >= canvas.height - square.width) {
             square.yDirection *= -1;
         }
     }
@@ -117,9 +124,9 @@ function checkCollisions() {
     for (let i = squares.length - 1; i >= 0; i--) {
         const square = squares[i];
         if (
-            character.x < square.x + square.size &&
+            character.x < square.x + square.width &&
             character.x + character.width > square.x &&
-            character.y < square.y + square.size &&
+            character.y < square.y + square.height &&
             character.y + character.height > square.y
         ) 
         {
