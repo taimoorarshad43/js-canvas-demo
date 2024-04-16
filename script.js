@@ -4,8 +4,10 @@ const ctx = canvas.getContext("2d");
 let character = {
     x: 50,
     y: 50,
-    size: 20,
+    width: 32,
+    height: 32,
     color: "blue",
+    sprite: document.getElementById("playerSprite"),
     speed: 5
 };
 
@@ -18,8 +20,8 @@ let bullets = [];
 function generateSquares(numSquares) {
     for (let i = 0; i < numSquares; i++) {
         squares.push({
-            x: Math.random() * (canvas.width - character.size), //minus character size b/c same size as enemy and want to spawn away from boundary
-            y: Math.random() * (canvas.height - character.size),
+            x: Math.random() * (canvas.width - character.width), //minus character size b/c same size as enemy and want to spawn away from boundary
+            y: Math.random() * (canvas.height - character.height),
             size: 20,
             color: "red", //random reddish color?
             speed: Math.random() * 3 + 1, // Random speed between 1 and 4
@@ -37,7 +39,7 @@ function generateBullet(xdir, ydir){
         x: character.x,
         y: character.y,
         size: 15,
-        color: "green",
+        color: "blue",
         speed: 7,
         xDirection: xdir,
         yDirection: ydir
@@ -47,8 +49,11 @@ function generateBullet(xdir, ydir){
 function drawCharacters() { //main render function that draws all entities
     //Character Block
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = character.color;
-    ctx.fillRect(character.x, character.y, character.size, character.size); //character size is both height and width b/c square
+    // ctx.fillStyle = character.color;
+    // ctx.fillRect(character.x, character.y, character.size, character.size); //character size is both height and width b/c square
+    ctx.drawImage(character.sprite, character.x, character.y, character.width, character.height);
+    console.log(character.x);
+    console.log(character.y);
 
     //Enemy Block
     for (const square of squares) {
@@ -82,8 +87,8 @@ function moveCharacter(event) {
     }
 
     //Checking for out of bounds
-    character.x = Math.max(0, Math.min(canvas.width - character.size, character.x));
-    character.y = Math.max(0, Math.min(canvas.height - character.size, character.y));
+    character.x = Math.max(0, Math.min(canvas.width - character.width, character.x));
+    character.y = Math.max(0, Math.min(canvas.height - character.height, character.y));
 
     checkCollisions();
     drawCharacters();
@@ -113,9 +118,9 @@ function checkCollisions() {
         const square = squares[i];
         if (
             character.x < square.x + square.size &&
-            character.x + character.size > square.x &&
+            character.x + character.width > square.x &&
             character.y < square.y + square.size &&
-            character.y + character.size > square.y
+            character.y + character.height > square.y
         ) 
         {
             // Collision detected, remove the square
