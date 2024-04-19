@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Mover</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/login.css')}}">
+</head>
+<body>
+    <img src="{{url_for('static', filename = 'sprites/main_character.jpg')}}" id="playerSprite" style="display: none;">
+    <img src="{{url_for('static', filename = 'sprites/enemy.jpg')}}" id="enemySprite" style="display: none;">
+    <img src="{{url_for('static', filename = 'sprites/bubble.jpg')}}" id="bubbleSprite" style="display: none;">
+    <canvas id="characterCanvas" width="700" height="700"></canvas>
+    <script src="{{url_for('static', filename = 'scripts/game.js')}}"></script>
+</body>
+</html>

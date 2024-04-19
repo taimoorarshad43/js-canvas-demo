@@ -7,8 +7,8 @@ canvas.height = window.innerHeight;
 let character = {
     x: 50,
     y: 50,
-    width: 32,
-    height: 32,
+    width: 50,
+    height: 50,
     color: "blue",
     sprite: document.getElementById("playerSprite"),
     speed: 5
@@ -25,8 +25,8 @@ function generateSquares(numSquares) {
         squares.push({
             x: Math.random() * (canvas.width - character.width), //minus character size b/c same size as enemy and want to spawn away from boundary
             y: Math.random() * (canvas.height - character.height),
-            height: 32,
-            width: 32,
+            height: 40,
+            width: 65,
             sprite: document.getElementById("enemySprite"),
             speed: Math.random() * 3 + 1, // Random speed between 1 and 4
             xDirection: Math.random() > 0.5 ? 1 : -1,
