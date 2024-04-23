@@ -74,5 +74,26 @@ def login():
 def game():
     return render_template('game.html')
 
+@app.route('/users')
+def getUsers():
+    #Get users from DB
+    #Create connection to DB
+
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+
+    c.execute("SELECT username FROM users")
+
+    users = c.fetchall()
+
+    #Close the connection
+    conn.close()
+
+    print(users)
+
+    return users
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
